@@ -66,12 +66,12 @@ class Education(models.Model):
 
 
 JOB_TYPE = (
-    ('1', "Full time"),
-    ('2', "Part time"),
-    ('3', "Internship"),
+    ('Full time', "Full time"),
+    ('Part time', "Part time"),
+    ('Internship', "Internship"),
 )
 class Job(models.Model):
-    company = models.ForeignKey(Employer, models.DO_NOTHING)
+    company = models.ForeignKey(User, models.DO_NOTHING, related_name='jobbs')
     title = models.CharField(max_length=45, blank=True, null=True)
     desc = models.TextField(blank=True, null=True)
     type = models.CharField(choices=JOB_TYPE, max_length=10)
@@ -81,10 +81,12 @@ class Job(models.Model):
     deadline = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return self.company + 'vs' + self.title
+        return self.title
 
 
 class Applyjob(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applicants')
+    pr = models.TextField(blank=True, null=True)
+    cv = models.FileField(blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)

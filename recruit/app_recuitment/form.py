@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
-from .models import User, Employer, Employee, Job
+from .models import User, Employer, Employee, Job, Applyjob
 
 
 # employer signup form
@@ -70,31 +70,36 @@ class EmployeeRegisterForm(UserCreationForm):
         student.save()
         return user
 
-class CompanyProfileForm(forms.ModelForm):
+# class CompanyProfileForm(forms.ModelForm):
+#     class Meta:
+#         model = Employer
+#         fields = ('company', 'address', 'website',
+#                   'desc', 'tax_code', 'representative', 'image' )
+#
+#
+# class CreateJobForm(forms.ModelForm):
+#     class Meta:
+#         model = Job
+#         exclude = ('company',)
+#
+#     def is_valid(self):
+#         valid = super(CreateJobForm, self).is_valid()
+#
+#         if valid:
+#             return valid
+#         return valid
+#
+#     def save(self, commit=True):
+#         job = super(CreateJobForm, self).save(commit=False)
+#         if commit:
+#             job.save()
+#         return job
+
+class ApplicationForm(forms.ModelForm):
     class Meta:
-        model = Employer
-        fields = ('company', 'address', 'website',
-                  'desc', 'tax_code', 'representative', 'image' )
+        model = Applyjob
+        fields = ['pr', 'cv']
 
-
-class CreateJobForm(forms.ModelForm):
-    class Meta:
-        model = Job
-        exclude = ('company',)
-
-    def is_valid(self):
-        valid = super(CreateJobForm, self).is_valid()
-
-        # if already valid, then return True
-        if valid:
-            return valid
-        return valid
-
-    def save(self, commit=True):
-        job = super(CreateJobForm, self).save(commit=False)
-        if commit:
-            job.save()
-        return job
 
 
 #     class Meta(UserCreationForm.Meta):
