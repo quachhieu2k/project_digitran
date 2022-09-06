@@ -215,7 +215,7 @@ li {
           <!-- social icon-->
           <div class="col-sm-12">
             <ul class="social-network">
-              <li><a class="waves-effect waves-dark" href="com_home"><h5>Employers</h5></a></li>
+<!--              <li><a class="waves-effect waves-dark" href="com_home"><h5>Employers</h5></a></li>-->
 <!--              <li><a class="waves-effect waves-dark" href="#"><i class="fa fa-twitter"></i></a></li>-->
 <!--              <li><a class="waves-effect waves-dark" href="#"><i class="fa fa-linkedin"></i></a></li>-->
 <!--              <li><a class="waves-effect waves-dark" href="#"><i class="fa fa-pinterest"></i></a></li>-->
@@ -228,12 +228,32 @@ li {
   </header>
   <nav class="navbar navbar-expand-lg navbar-dark mx-background-top-linear">
     <div class="container">
-      <a class="navbar-brand" href="index.html" style="text-transform: uppercase;"> LACODEID.COM</a>
+      <a class="navbar-brand" href="/" style="text-transform: uppercase;"> DIGITRAN.COM</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
 
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav ml-auto">
+             <li class="nav-item">
+            <a class="nav-link" href="#">List jobs</a>
+          </li>
+
+         <li class="nav-item">
+            <a class="nav-link" href="#">Jobs matching</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="#">Profile</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/logout"><b>Logout</b></a>
+          </li>
+        </ul>
+
+          {% else %}
         <ul class="navbar-nav ml-auto">
 
           <li class="nav-item">
@@ -249,13 +269,14 @@ li {
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="/stu_login"><b>Login</b></a>
+            <a class="nav-link" href="/accounts/login/"><b>Login</b></a>
           </li>
 
           <li class="nav-item">
-            <a style= "background: blue" class="nav-link" href="/stu_register">Register</a>
+            <a style= "background: blue" class="nav-link" href="/register">Register</a>
           </li>
         </ul>
+        {% endif %}
       </div>
     </div>
   </nav>

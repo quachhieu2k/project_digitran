@@ -70,13 +70,13 @@ class EmployeeRegisterForm(UserCreationForm):
         student.save()
         return user
 
-# class CompanyProfileForm(forms.ModelForm):
-#     class Meta:
-#         model = Employer
-#         fields = ('company', 'address', 'website',
-#                   'desc', 'tax_code', 'representative', 'image' )
-#
-#
+class CompanyProfileForm(forms.ModelForm):
+    class Meta:
+        model = Employer
+        fields = ('company', 'address', 'website',
+                  'desc', 'tax_code', 'representative', 'image' )
+
+
 # class CreateJobForm(forms.ModelForm):
 #     class Meta:
 #         model = Job
@@ -98,7 +98,7 @@ class EmployeeRegisterForm(UserCreationForm):
 class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Applyjob
-        fields = ['pr', 'cv']
+        fields = ['fullname','email','pr', 'cv']
 
 
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import login,authenticate,logout
-from .form import EmployerRegisterForm, EmployeeRegisterForm, ApplicationForm
+from .form import EmployerRegisterForm, EmployeeRegisterForm, ApplicationForm, CompanyProfileForm
 from .models import Employer, User, Job
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from django.contrib.auth.forms import AuthenticationForm
@@ -22,6 +22,9 @@ def home(request):
             return render(request, 'student/stu_home.html', {'jobs': jobs, 'company': company})
     return render(request, 'student/stu_home.html', {'jobs': jobs, 'company': company})
 
+
+def register(request):
+    return render(request, 'student/register_form.html')
 
 
 def job_detail(request, job_id):
@@ -51,6 +54,7 @@ def job_detail(request, job_id):
     #     context = self.get_context_data(object=self.object)
     #     return self.render_to_response(context)
 
+# ACCOUNT VIEW
 
 class student_register(CreateView):
     model = User
@@ -81,7 +85,7 @@ def login_student(request):
     context={'form':AuthenticationForm()})
 
 
-#VIEW COMPANY
+
 class company_register(CreateView):
     model = User
     form_class = EmployerRegisterForm
@@ -92,28 +96,42 @@ class company_register(CreateView):
         login(self.request, user)
         return redirect('/')
 
-
-def login_company(request):
-    if request.method=='POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None :
-                login(request,user)
-                return redirect('/')
-            else:
-                messages.error(request,"Invalid username or password")
-        else:
-                messages.error(request,"Invalid username or password")
-    return render(request, 'company/com_login.html',
-    context={'form':AuthenticationForm()})
-
+# def login_company(request):
+#     if request.method=='POST':
+#         form = AuthenticationForm(data=request.POST)
+#         if form.is_valid():
+#             username = form.cleaned_data.get('username')
+#             password = form.cleaned_data.get('password')
+#             user = authenticate(username=username, password=password)
+#             if user is not None :
+#                 login(request,user)
+#                 return redirect('/')
+#             else:
+#                 messages.error(request,"Invalid username or password")
+#         else:
+#                 messages.error(request,"Invalid username or password")
+#     return render(request, 'company/com_login.html',
+#     context={'form':AuthenticationForm()})
 
 def logout_view(request):
     logout(request)
     return redirect('/')
+
+#COMPANY VIEW
+@method_decorator([login_required, company_required], name='dispatch')
+class UpdateProfile(UpdateView):
+    model = Employer
+    form_class = CompanyProfileForm
+    template_name = 'company/update_profile.html'
+    success_url = reverse_lazy('home')
+
+    def get_object(self):
+        return self.request.user.employer
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Interests updated with success!')
+        return super().form_valid(form)
+
 
 @method_decorator([login_required, company_required], name='dispatch')
 class JobCreateView(CreateView):
@@ -164,6 +182,8 @@ class JobDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
+#STUDENT VIEW
+
 @login_required
 @student_required
 def apply_for_job(request, job_id):
@@ -175,12 +195,12 @@ def apply_for_job(request, job_id):
         if form.is_valid():
             application = form.save(commit=False)
             application.job = job
-            application.created_by = request.user
+            application.user = request.user
             application.save()
-
 
             return redirect('/')
     else:
         form = ApplicationForm()
 
-    return render(request, 'job/apply_for_job.html', {'form': form, 'job': job})
+    return render(request, 'student/apply_job.html', {'form': form, 'job': job})
+
