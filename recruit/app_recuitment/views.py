@@ -2,13 +2,17 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth import login,authenticate,logout
 from .form import EmployerRegisterForm, EmployeeRegisterForm, ApplicationForm, CompanyProfileForm
-from .models import Employer, User, Job
+from .models import Employer, User, Job, Applyjob, Employee
 from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from .decorator import company_required, student_required
+from django.db.models import Count
+from django.views.decorators.csrf import csrf_exempt
+
+
 # Create your views here.
 
 #TRANG HOME
@@ -57,16 +61,18 @@ def job_detail(request, job_id):
 # ACCOUNT VIEW
 
 class student_register(CreateView):
+
     model = User
     form_class = EmployeeRegisterForm
     template_name = 'student/stu_register.html'
 
+    @csrf_exempt
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
         return redirect('/')
 
-
+@csrf_exempt
 def login_student(request):
     if request.method=='POST':
         form = AuthenticationForm(data=request.POST)
@@ -91,6 +97,7 @@ class company_register(CreateView):
     form_class = EmployerRegisterForm
     template_name = 'company/com_register.html'
 
+    @csrf_exempt
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
@@ -133,12 +140,14 @@ class UpdateProfile(UpdateView):
         return super().form_valid(form)
 
 
+
 @method_decorator([login_required, company_required], name='dispatch')
 class JobCreateView(CreateView):
     model = Job
-    fields = ('title', 'desc', 'type', 'requirements', 'benefits', 'number_req', 'deadline'  )
+    fields = ('title', 'desc', 'type', 'requirements', 'benefits', 'number_req', 'deadline')
     template_name = 'company/create_job.html'
 
+    @csrf_exempt
     def form_valid(self, form):
         job = form.save(commit=False)
         job.company = self.request.user
@@ -149,13 +158,13 @@ class JobCreateView(CreateView):
 @method_decorator([login_required, company_required], name='dispatch')
 class JobListView(ListView):
     model = Job
-    # ordering = ('title',)
-    context_object_name = 'jobbs'
+    context_object_name = 'jobs'
     template_name = 'company/list_jobs.html'
 
     def get_queryset(self):
         queryset = self.request.user.jobbs \
-            .select_related('company')
+            .select_related('company') \
+            .annotate(apply_count = Count('applys', distinct=True))
         return queryset
 
 
@@ -167,7 +176,7 @@ class JobUpdateView(UpdateView):
     template_name = 'company/update_job.html'
 
     def get_success_url(self):
-        return reverse('update', kwargs={'pk': self.object.pk})
+        return reverse('list_job')
 
 
 @method_decorator([login_required, company_required], name='dispatch')
@@ -182,25 +191,72 @@ class JobDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-#STUDENT VIEW
+@method_decorator([login_required, company_required], name='dispatch')
+class StudentListView(DetailView):
+    model = Job
+    context_object_name = 'jobs'
+    template_name = 'company/student_apply.html'
 
+    def get_context_data(self, **kwargs):
+        jobs = self.get_object()
+        taken = jobs.applys.select_related('user__employer').order_by('-created_at')
+
+        extra_context = {
+            'taken': taken,
+        }
+        kwargs.update(extra_context)
+        return super().get_context_data(**kwargs)
+
+    def get_queryset(self):
+        return self.request.user.jobbs.all()
+
+
+# @method_decorator([login_required, company_required], name='dispatch')
+# class StudentDetailView(DetailView):
+#     model = Applyjob
+#     context_object_name = 'applys'
+#     template_name = 'company/student_detail.html'
+#
+#     def get_queryset(self):
+#         return self.request.user.jobbs.all()
+
+#STUDENT VIEW
+# apply job
 @login_required
 @student_required
+@csrf_exempt
 def apply_for_job(request, job_id):
     job = Job.objects.get(pk=job_id)
-
     if request.method == 'POST':
-        form = ApplicationForm(request.POST)
-
+        form = ApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             application = form.save(commit=False)
             application.job = job
             application.user = request.user
             application.save()
 
-            return redirect('/')
+            return redirect('list_apply')
     else:
         form = ApplicationForm()
-
     return render(request, 'student/apply_job.html', {'form': form, 'job': job})
 
+
+@method_decorator([login_required, student_required], name='dispatch')
+class ApplyListView(ListView):
+    model = Applyjob
+    context_object_name = 'applys'
+    template_name = 'student/list_apply.html'
+
+    def get_queryset(self):
+        queryset = self.request.user.applys \
+            .select_related('user')
+        return queryset
+
+#tìm kiếm job
+class SearchView(ListView):
+    model = Job
+    template_name = 'student/search.html'
+    context_object_name = 'jobs'
+
+    # def get_queryset(self):
+    #     return self.model.objects.filter(title__contains=self.request.GET['title'])

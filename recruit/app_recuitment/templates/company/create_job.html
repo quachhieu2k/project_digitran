@@ -26,30 +26,30 @@
       <form method="post" >
         {% csrf_token %}
 <!--        <input type="hidden" name="csrfmiddlewaretoken" value="cKoY7oj2SvVDP2bQXpobqTHXZwUQKoQS8IrzgMZxnlHe1w3UfiytnKUL4LxevYfy">-->
+{{ form|crispy }}
 
+<!--<div id="div_id_title" class="control-group"> <label for="id_title" class="control-label ">-->
+<!--                Title-->
+<!--            </label> <div class="controls"> <input type="text" name="title" maxlength="45" class="textinput textInput" id="id_title"> </div> </div> <div id="div_id_desc" class="control-group"> <label for="id_desc" class="control-label ">-->
+<!--                Desc-->
+<!--            </label> <div class="controls"> <textarea name="desc" cols="40" rows="10" class="textarea" id="id_desc">-->
+<!--</textarea> </div> </div> <div id="div_id_type" class="control-group"> <label for="id_type" class="control-label requiredField">-->
+<!--                Type<span class="asteriskField">*</span> </label> <div class="controls"> <select name="type" class="select" required id="id_type"> <option value="" selected>-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;</option> <option value="1">Full time</option> <option value="2">Part time</option> <option value="3">Internship</option>-->
 
-<div id="div_id_title" class="control-group"> <label for="id_title" class="control-label ">
-                Title
-            </label> <div class="controls"> <input type="text" name="title" maxlength="45" class="textinput textInput" id="id_title"> </div> </div> <div id="div_id_desc" class="control-group"> <label for="id_desc" class="control-label ">
-                Desc
-            </label> <div class="controls"> <textarea name="desc" cols="40" rows="10" class="textarea" id="id_desc">
-</textarea> </div> </div> <div id="div_id_type" class="control-group"> <label for="id_type" class="control-label requiredField">
-                Type<span class="asteriskField">*</span> </label> <div class="controls"> <select name="type" class="select" required id="id_type"> <option value="" selected>---------</option> <option value="1">Full time</option> <option value="2">Part time</option> <option value="3">Internship</option>
-
-</select> </div> </div> <div id="div_id_requirements" class="control-group"> <label for="id_requirements" class="control-label ">
-                Requirements
-            </label> <div class="controls"> <textarea name="requirements" cols="40" rows="10" class="textarea" id="id_requirements">
-</textarea> </div> </div> <div id="div_id_benefits" class="control-group"> <label for="id_benefits" class="control-label ">
-                Benefits
-            </label> <div class="controls"> <textarea name="benefits" cols="40" rows="10" class="textarea" id="id_benefits">
-</textarea> </div> </div> <div id="div_id_number_req" class="control-group"> <label for="id_number_req" class="control-label ">
-                Number req
-            </label> <div class="controls"> <input type="number" name="number_req" class="numberinput" id="id_number_req"> </div> </div> <div id="div_id_deadline" class="control-group"> <label for="id_deadline" class="control-label ">
-                Deadline
-            </label> <div class="controls"> <input type="date" name="deadline" class="dateinput" id="id_deadline"> </div> </div>
+<!--</select> </div> </div> <div id="div_id_requirements" class="control-group"> <label for="id_requirements" class="control-label ">-->
+<!--                Requirements-->
+<!--            </label> <div class="controls"> <textarea name="requirements" cols="40" rows="10" class="textarea" id="id_requirements">-->
+<!--</textarea> </div> </div> <div id="div_id_benefits" class="control-group"> <label for="id_benefits" class="control-label ">-->
+<!--                Benefits-->
+<!--            </label> <div class="controls"> <textarea name="benefits" cols="40" rows="10" class="textarea" id="id_benefits">-->
+<!--</textarea> </div> </div> <div id="div_id_number_req" class="control-group"> <label for="id_number_req" class="control-label ">-->
+<!--                Number req-->
+<!--            </label> <div class="controls"> <input type="number" name="number_req" class="numberinput" id="id_number_req"> </div> </div> <div id="div_id_deadline" class="control-group"> <label for="id_deadline" class="control-label ">-->
+<!--                Deadline-->
+<!--            </label> <div class="controls"> <input type="date" name="deadline" class="dateinput" id="id_deadline"> </div> </div>-->
         <button type="submit" class="btn btn-success">Save</button>
         <a href="#" class="btn btn-outline-secondary" role="button">Nevermind</a>
       </form>
     </div>
-
+{{form}}
 {% endblock %}

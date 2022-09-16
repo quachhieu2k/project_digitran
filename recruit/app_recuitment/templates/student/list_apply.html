@@ -1,0 +1,41 @@
+{% extends 'student/base_stu.html' %}
+{% load static %}
+{% block conten %}
+ <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item active" aria-current="page"></li>
+    </ol>
+  </nav>
+  <h2 class="mb-3">My Jobs</h2>
+  <div class="card">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Apply day</th>
+          <th>Company</th>
+          <th>Number View</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in applys %}
+          <tr>
+            <td class="align-middle"><a href="jobs/{{job.job.id}}">{{ job.job }}</a></td>
+            <td class="align-middle">{{ job.created_at }}</td>
+            <td class="align-middle">{{ job.job.company }}</td>
+            <td class="align-middle"></td>
+            <td class="text-right">
+              <a href="#" class="btn btn-primary">View results</a>
+            </td>
+          </tr>
+        {% empty %}
+<!--          <tr>-->
+<!--            <td class="bg-light text-center font-italic" colspan="5">You haven't created any quiz yet.</td>-->
+<!--          </tr>-->
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

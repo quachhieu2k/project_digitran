@@ -4,11 +4,11 @@
 {% block conten %}
 
     <h2 class="mb-3">Update your interests</h2>
-  <form method="post" action="">
+  <form method="post" action="" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form|crispy }}
     <button type="submit" class="btn btn-success">Save changes</button>
     <a href="/list_job" class="btn btn-outline-secondary">Nevermind</a>
   </form>
-
+{% crispy form %}
 {% endblock %}

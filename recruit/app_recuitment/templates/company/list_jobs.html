@@ -20,14 +20,14 @@
         </tr>
       </thead>
       <tbody>
-        {% for job in jobbs %}
+        {% for job in jobs %}
           <tr>
             <td class="align-middle"><a href="job/{{job.id}}">{{ job.title }}</a></td>
             <td class="align-middle">{{ job.deadline }}</td>
             <td class="align-middle">{{ job.number_req }}</td>
-            <td class="align-middle"></td>
+            <td class="align-middle">{{ job.apply_count }}</td>
             <td class="text-right">
-              <a href="#" class="btn btn-primary">View results</a>
+              <a href="job/{{job.id}}/view" class="btn btn-primary">View results</a>
             </td>
           </tr>
         {% empty %}

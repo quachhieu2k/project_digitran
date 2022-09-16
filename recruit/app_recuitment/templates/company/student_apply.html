@@ -1,0 +1,47 @@
+{% extends 'company/base_com.html' %}
+{% load static %}
+{% block conten %}
+ <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item active" aria-current="page"></li>
+    </ol>
+
+  </nav>
+  <h2 class="mb-3">{{ jobs.title }} Results</h2>
+
+  <div class="card">
+
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+          <th>Name</th>
+            <th>Email</th>
+            <th>CV</th>
+            <th>Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in taken %}
+          <tr>
+            <td>{{file.user.first_name}} {{file.user.last_name}}</td>
+            <td>{{file.created_at}}</td>
+            <td>{{file.user.first_name}} {{file.user.last_name}}</td>
+              <td>{{file.user.email}}</td>
+              <td>{{file.cv}}</td>
+              <td>{{file.user.employee.age}}</td>
+          <td class="text-right">
+                  <a href="/student_detail/{{file.user.id}}" class="btn btn-primary">View results</a>
+            </td>
+          </tr>
+
+        {% endfor %}
+            </tbody>
+    </table>
+    <div class="card-footer text-muted">
+
+    </div>
+  </div>
+
+{% endblock %}

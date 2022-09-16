@@ -34,6 +34,12 @@ class Employer(models.Model):
         return self.company
 
 
+gender = (
+    ('Nam', "Nam"),
+    ('Nữ', "Nữ"),
+    ('Khác', "Khác"),
+)
+
 class Employee(models.Model):
     user = models.OneToOneField(
         User,
@@ -42,7 +48,7 @@ class Employee(models.Model):
 
     firstname = models.CharField(max_length=45, blank=True, null=True)
     lastname = models.CharField(max_length=45, blank=True, null=True)
-    gender = models.CharField(max_length=10, blank=True, null=True)
+    gender = models.CharField(max_length=10,choices=gender, blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
     age = models.IntegerField(blank=True, null=True)
     home_town = models.CharField(max_length=100, blank=True, null=True)
@@ -52,8 +58,7 @@ class Employee(models.Model):
     # start_year = models.DateField(blank=True, null=True)
     # grad_year = models.DateField(blank=True, null=True)
     # gpa = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
-    def __str__(self):
-        return self.firstname + self.lastname
+
 
 class Education(models.Model):
     student = models.ForeignKey(Employee, models.DO_NOTHING, blank=True, null=True)
@@ -85,10 +90,13 @@ class Job(models.Model):
 
 
 class Applyjob(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applicants')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='applys' )
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applys')
     fullname = models.CharField(max_length=45, blank=True, null=True)
-    email = models.EmailField(max_length=200, unique=True, blank=False)
+    email = models.EmailField(max_length=200, blank=False)
     pr = models.TextField(blank=True, null=True)
-    cv = models.FileField(blank=True, null=True)
+    cv = models.FileField(upload_to='documents/',blank=True, null=True)
     created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.fullname

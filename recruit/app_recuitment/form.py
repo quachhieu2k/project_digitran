@@ -2,7 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 from .models import User, Employer, Employee, Job, Applyjob
-
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column
 
 # employer signup form
 class EmployerRegisterForm(UserCreationForm):
@@ -36,13 +37,17 @@ class EmployerRegisterForm(UserCreationForm):
         return user
 
 
-
+Gender = (
+    ('Nam', "Nam"),
+    ('Nữ', "Nữ"),
+    ('Khác', "Khác"),
+)
 class EmployeeRegisterForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)
     last_name = forms.CharField(max_length=30, required=True)
     email = forms.EmailField(max_length=30, required=True)
     phone_number = forms.CharField(max_length=15, required=True)
-    gender = forms.CharField(max_length=10,required=True)
+    gender = forms.ChoiceField(choices = Gender,required=True)
     dob = forms.DateField(required=True, help_text='*required')
     age = forms.IntegerField(required=True)
     home_town = forms.CharField(max_length=254, help_text='*required')
@@ -61,14 +66,35 @@ class EmployeeRegisterForm(UserCreationForm):
         user.phone_number = self.cleaned_data.get('phone_number')
         user.save()
         student = Employee.objects.create(user=user)
-        student.firstname = self.cleaned_data.get('firstname')
-        student.lastname = self.cleaned_data.get('address')
+        student.firstname = self.cleaned_data.get('first_name')
+        student.lastname = self.cleaned_data.get('last_name')
         student.dob = self.cleaned_data.get('dob')
         student.age = self.cleaned_data.get('age')
         student.home_town = self.cleaned_data.get('home_town')
         student.current_address = self.cleaned_data.get('current_address')
         student.save()
         return user
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column('first_name', css_class='form-group col-md-6 mb-0'),
+                Column('password', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'
+            ),
+            'address_1',
+            'address_2',
+            Row(
+                Column('city', css_class='form-group col-md-6 mb-0'),
+                Column('state', css_class='form-group col-md-4 mb-0'),
+                Column('zip_code', css_class='form-group col-md-2 mb-0'),
+                css_class='form-row'
+            ),
+            'check_me_out',
+            Submit('submit', 'Sign in')
+        )
 
 class CompanyProfileForm(forms.ModelForm):
     class Meta:
@@ -77,24 +103,6 @@ class CompanyProfileForm(forms.ModelForm):
                   'desc', 'tax_code', 'representative', 'image' )
 
 
-# class CreateJobForm(forms.ModelForm):
-#     class Meta:
-#         model = Job
-#         exclude = ('company',)
-#
-#     def is_valid(self):
-#         valid = super(CreateJobForm, self).is_valid()
-#
-#         if valid:
-#             return valid
-#         return valid
-#
-#     def save(self, commit=True):
-#         job = super(CreateJobForm, self).save(commit=False)
-#         if commit:
-#             job.save()
-#         return job
-
 class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Applyjob
@@ -102,37 +110,4 @@ class ApplicationForm(forms.ModelForm):
 
 
 
-#     class Meta(UserCreationForm.Meta):
-#         model = User
-#         fields = ('username', 'email', 'phone_number', 'password1', 'password2')
-#
-#     @transaction.atomic
-#     def save(self):
-#         user = super().save(commit=False)
-#         user.is_student = True
-#         user.save()
-#         student = Employee.objects.create(user=user)
-#         return user
-#
-
-
-# class CompanyRegisterForm(UserCreationForm):
-#     name = forms.CharField(max_length=30, required=True, help_text='*required')
-#     representative=forms.CharField(max_length=30, required=True, help_text='*required')
-#     tax_code=forms.CharField(max_length=30, min_length=10,required=True, help_text='*required')
-#     website=forms.CharField(max_length=30, required=True, help_text='*required')
-#     desc=forms.CharField(max_length=1000, required=True, help_text='*required')
-#     address = forms.CharField(max_length=254, help_text='*required')
-#     class Meta(UserCreationForm.Meta):
-#         model = User
-#         fields = ('username', 'name','tax_code','website','desc','representative','email','password1', 'password2' )
-#
-#
-#     def save(self):
-#         user = super().save(commit=False)
-#         user.is_company = True
-#         user.is_active = False
-#         user.save()
-#
-#         return user
 
